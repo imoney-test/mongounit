@@ -32,7 +32,10 @@ class PizzaTraitTest extends \PHPUnit_Framework_TestCase {
 		'orders' => [
 			['size' => 'large', 'toppings' => ['cheese', 'ham']],
 			['size' => 'medium', 'toppings' => ['cheese']]
-		]
+		],
+		'carts' => [
+			// Intentionally empty
+		],
 	];
 
 	/**
@@ -40,7 +43,7 @@ class PizzaTraitTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function getMongoConnection() {
 		if (empty($this->connection)) {
-			$this->connection = new Connector(new \MongoClient());
+			$this->connection = new Connector(new \MongoDB\Client());
 			$this->connection->setDb(static::DEFAULT_DATABASE);
 		}
 		return $this->connection;
@@ -58,9 +61,9 @@ class PizzaTraitTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testSizesFromFixture() {
-		$this->assertCount(2, $this->getMongoConnection()->collection('orders')->find());
+		$this->assertSame(2, $this->getMongoConnection()->collection('orders')->count());
 		$this->assertCount(1, $this->getMongoConnection()->collection('orders')->find(array(
 			'size' => 'medium'
-		)));
+		))->toArray());
 	}
 }

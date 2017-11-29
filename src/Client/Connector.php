@@ -12,16 +12,9 @@ class Connector implements BaseConnector {
 	/**
 	 * Holds the mongo client connection.
 	 *
-	 * @var \MongoClient
+	 * @var \MongoDB\Client
 	 */
 	protected $connection;
-
-	/**
-	 * Array of collection objects keyed by collection name
-	 *
-	 * @var array
-	 */
-	protected $collections;
 
 	/**
 	 * The db name this connector should work off
@@ -33,14 +26,14 @@ class Connector implements BaseConnector {
 	/**
 	 * Constructor
 	 */
-	public function __construct(\MongoClient $connection) {
+	public function __construct(\MongoDB\Client $connection) {
 		$this->connection = $connection;
 	}
 
 	/**
 	 * Retrieves a connection.
 	 *
-	 * @return \MongoClient
+	 * @return \MongoDB\Client
 	 */
 	public function getConnection() {
 		return $this->connection;
@@ -59,13 +52,10 @@ class Connector implements BaseConnector {
 	 * Retrieves a collection object by name.
 	 *
 	 * @param string $name
-	 * @return \MongoCollection
+	 * @return \MongoDB\Collection
 	 */
 	public function collection($name) {
-		if (empty($this->collections[$name])) {
-			$this->collections[$name] = new \MongoCollection($this->connection->selectDb($this->dbName), $name);
-		}
-		return $this->collections[$name];
+		return $this->connection->selectCollection($this->dbName, $name);
 	}
 
 }
